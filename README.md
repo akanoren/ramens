@@ -3,7 +3,7 @@ Ramen is a programming language.
 
 ## Install
 ```
-go get -u -v github.com/akanoren/ramen
+go get -u -v github.com/akanoren/ramens/cmd/ramen
 ```
 
 ## Sample code
