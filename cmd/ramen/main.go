@@ -61,75 +61,68 @@ func (p *Program) Parse(r io.Reader) error {
 func (p *Program) Run() error {
 	r := bufio.NewReader(os.Stdin)
 	w := bufio.NewWriter(os.Stdout)
+L:
 	for i := 0; i < len(p.Code); i++ {
-	SW:
 		switch p.Code[i] {
-		// instructionはゼロスタートなので実際の🍜の個数とは1ずれる
-		case 0:
-			if l := uint(len(p.Heap)); l <= p.Ptr {
-				add := make([]int32, 1+p.Ptr-l)
-				p.Heap = append(p.Heap, add...)
-			}
-			p.Heap[p.Ptr] += 1
-
-		case 1:
-			if l := uint(len(p.Heap)); l <= p.Ptr {
-				add := make([]int32, 1+p.Ptr-l)
-				p.Heap = append(p.Heap, add...)
-			}
-			p.Heap[p.Ptr] -= 1
-
 		case 2:
 			p.Ptr += 1
+			continue L
 
 		case 3:
 			p.Ptr -= 1
+			continue L
+
+		}
+
+		if l := uint(len(p.Heap)); l <= p.Ptr {
+			add := make([]int32, 1+p.Ptr-l)
+			p.Heap = append(p.Heap, add...)
+		}
+
+		switch p.Code[i] {
+		// instructionはゼロスタートなので実際の🍜の個数とは1ずれる
+		case 0:
+			p.Heap[p.Ptr] += 1
+
+		case 1:
+			p.Heap[p.Ptr] -= 1
 
 		case 4:
 			r, _, err := r.ReadRune()
 			if err != nil {
 				return err
 			}
-			if l := uint(len(p.Heap)); l <= p.Ptr {
-				add := make([]int32, 1+p.Ptr-l)
-				p.Heap = append(p.Heap, add...)
-			}
 			p.Heap[p.Ptr] = int32(r)
 
 		case 5:
-			if l := uint(len(p.Heap)); l <= p.Ptr {
-				add := make([]int32, 1+p.Ptr-l)
-				p.Heap = append(p.Heap, add...)
-			}
 			_, err := w.WriteRune(rune(p.Heap[p.Ptr]))
 			if err != nil {
 				return err
 			}
 
 		case 6:
-			if l := uint(len(p.Heap)); l <= p.Ptr {
-				add := make([]int32, 1+p.Ptr-l)
-				p.Heap = append(p.Heap, add...)
-			}
 			if p.Heap[p.Ptr] == 0 {
 				for j := i + 1; j < len(p.Code); j++ {
 					if p.Code[j] == 7 {
 						i = j
-						break SW
+						continue L
 					}
 				}
 				return fmt.Errorf("No closing of the block from Line: %d  was found", i)
 			}
 
 		case 7:
-			for j := i - 1; j >= 0; j-- {
-				if p.Code[j] == 6 {
-					i = j - 1
-					break SW
+			if p.Heap[p.Ptr] != 0 {
+				for j := i - 1; j >= 0; j-- {
+					if p.Code[j] == 6 {
+						i = j - 1
+						continue L
+					}
 				}
+				return fmt.Errorf("No beginning of the block from Line: %d  was found", i)
 			}
-			return fmt.Errorf("No beginning of the block from Line: %d  was found", i)
 		}
 	}
+
 	return w.Flush()
 }
