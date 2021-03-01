@@ -13,6 +13,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer scriptFile.Close()
+
 	var p Program
 	if err := p.Parse(scriptFile); err != nil {
 		log.Fatal(err)
@@ -25,7 +27,7 @@ func main() {
 type Program struct {
 	Ptr  uint
 	Heap []int32
-	Code []uint8
+	Code []Command
 }
 
 type Command uint8
@@ -33,6 +35,7 @@ type Command uint8
 func (p *Program) Parse(r io.Reader) error {
 	reader := bufio.NewReader(r)
 	var c *Command
+
 	for {
 		r, _, err := reader.ReadRune()
 		if err != nil {
@@ -41,17 +44,18 @@ func (p *Program) Parse(r io.Reader) error {
 			}
 			return err
 		}
+
 		switch r {
 		case '🍜':
 			if c == nil {
 				var i Command = 0
 				c = &i
-				break
+			} else {
+				*c = *c + 1
 			}
-			*c = *c + 1
 		default:
 			if c != nil {
-				p.Code = append(p.Code, uint8(*c))
+				p.Code = append(p.Code, *c)
 				c = nil
 			}
 		}
