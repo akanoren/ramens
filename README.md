@@ -33,13 +33,13 @@ There are only eight commands for the language(all commands are the same as Brai
     Decrement the program pointer
 
 5. 🍜🍜🍜🍜🍜
-    Write the value to which the program pointer points to Stdout
-
-6. 🍜🍜🍜🍜🍜🍜
     Read a unicode character from Stdin and set the value to which the program pointer points to it
 
-7. 🍜🍜🍜🍜🍜🍜🍜
+6. 🍜🍜🍜🍜🍜🍜
+    Write the value to which the program pointer points to Stdout
+
+8. 🍜🍜🍜🍜🍜🍜🍜
     If the value to which the program pointer points is zero, jump to the next '🍜🍜🍜🍜🍜🍜🍜🍜'
 
-8. 🍜🍜🍜🍜🍜🍜🍜🍜
-    Jump to '🍜🍜🍜🍜🍜🍜🍜' which most recently appeared
+9. 🍜🍜🍜🍜🍜🍜🍜🍜
+   If the value to which the program pointer points is non-zero, jump to '🍜🍜🍜🍜🍜🍜🍜' which most recently appeared
